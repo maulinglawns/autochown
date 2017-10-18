@@ -22,28 +22,20 @@ Exit codes:
 5: Error. You are not root.
 ```
 
-### Examples:
-Success:
+### Example:
 ```
-[root@localhost ~]# ./autochown.sh -d /sftphome/ -u sftpuser &
-[1] 2588
-[root@localhost ~]# Setting up watches.
-Watches established.
+# whoami 
+root
+# touch /sftp/file_before_autochown
+# ls -l /sftp/
+total 0
+-rw-r--r--. 1 root root 0 18 okt 20.27 file_before_autochown
+[# ./autochown -d /sftp/ -u sftpuser &
+[1] 3822
+# touch /sftp/file_after_autochown
+# ls -l /sftp/
+total 0
+-rw-r--r--. 1 sftpuser root 0 18 okt 20.27 file_after_autochown
+-rw-r--r--. 1 root     root 0 18 okt 20.27 file_before_autochown
 
-[root@localhost ~]# ls -l /sftphome/
-totalt 0
-[root@localhost ~]# touch /sftphome/foobar
-[root@localhost ~]# ls -l /sftphome/
-totalt 0
--rw-r--r--. 1 sftpuser root 0 18 okt 12.21 foobar
-```
-Various errors:
-```
-[root@localhost ~]# ./autochown.sh -d /sftphome/ -u sleezeball
-No user sleezeball found on this system. Exiting.
-[root@localhost ~]# ./autochown.sh -d /ftphome/ -u sftpuser
-/ftphome/ is not a directory. Exiting
-[root@localhost ~]# ./autochown.sh -d /ftphome/ -z sftpuser
-Unknown option. '-d' '-u' and '-h' allowed. Usage:
-./autochown.sh -d <directory> -u <username> [-h]
 ```
