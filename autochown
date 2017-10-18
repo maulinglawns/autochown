@@ -96,6 +96,7 @@ if ! grep -q $username /etc/passwd; then
 fi
 
 # Set up watch with inotify
+# Using double '-q -q' to suppress output to stdout
 inotifywait -q -q -m $directory -e create -e moved_to |
     while read path action file; do
         chown $username $path$file
