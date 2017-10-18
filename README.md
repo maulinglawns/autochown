@@ -4,7 +4,7 @@ ___
 
 ### Purpose:
 We cannot (and for good reasons) use `setuid` the same way we can use `setgid` on directories in GNU/Linux.
-This small script aims to solve the problem of automatically changing owner to <username> upon creating - or moving - new files to <directory>
+This small script aims to solve the problem of automatically changing owner to `<username>` upon creating - or moving - new files to `<directory>`
 
 ### Usage:
 ```
