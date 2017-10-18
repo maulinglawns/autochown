@@ -1,0 +1,104 @@
+#!/bin/bash
+
+usage="$0 -d <directory> -u <username> [-h]"
+
+helptext="$(echo $0 | sed 's/^\.\///')
+
+This program changes ownership on all files moved to,
+or created in, the directory <directory>
+The owner will be the set to the user <user>
+
+Written to emulate a 'setuid' except for directories.
+
+Mandatory switches and arguments:
+-d <directory> = Directory to watch
+-u <user> = Change owner to this user
+Optional:
+-h = Show this help and exit
+
+Usage:
+$(echo $usage)
+
+Example:
+$0 -d /path/to/directory -u myuser
+
+Exit codes:
+0: Success.
+1: Error. Unknown switch.
+2: Error. Directory or username not specified.
+3: Error. The directory specified is not a directory.
+4: Error. The specified user does not exist.
+5: Error. You are not root.*
+
+*You obviously do NOT need to be root to view this help,
+but rather when running the actual program!
+
+License:
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Written by Magnus Wallin in 2017.
+"
+
+while getopts ":d:u:h" opt; do
+    case $opt in
+        d)
+            directory=$OPTARG
+            ;;
+        u)
+            username=$OPTARG
+            ;;
+        h)
+            echo "$helptext" | less
+            exit 0
+            ;;
+        *)
+            echo -e "Unknown option. '-d' '-u' and '-h' allowed. Usage:\n$usage"
+            exit 1
+            ;;
+    esac
+done
+
+shift $(($OPTIND-1))
+
+# These arguments are mandatory
+if [[ -z $directory || -z $username ]]; then
+    echo "Either directory or username not specified. Exiting."
+    exit 2
+fi
+
+# You need to run this as root
+if (( $EUID != 0 )); then
+    echo "You are not root. Exiting."
+    exit 5
+fi
+
+# Check if $directory IS a directory
+if [[ ! -d $directory ]]; then
+    echo "$directory is not a directory. Exiting"
+    exit 3
+fi
+
+# Check if user $username exists
+if ! grep -q $username /etc/passwd; then
+    echo "No user $username found on this system. Exiting."
+    exit 4
+fi
+
+# Set up watch with inotify
+inotifywait -m $directory -e create -e moved_to |
+    while read path action file; do
+        chown $username $path$file
+    done
+
+exit 0
