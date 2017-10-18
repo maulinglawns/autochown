@@ -3,16 +3,12 @@
 ___
 
 ### Purpose:
-We cannot (and for good reasons) use `setuid` the same way we can use `setgid` on directories in GNU/Linux.
-This small script aims to solve the problem of automatically changing owner to `<username>` upon creating - or moving - new files to `<directory>`
+This small script aims to solve the problem of automatically changing owner to `<username>` upon creating - or moving - new files to `<directory>`.
+Similar to the `setgid` bit, except this works on users.
 
 ### Usage:
 ```
-Mandatory switches and arguments:
--d <directory> = Directory to watch
--u <user> = Change owner to this user
-Optional:
--h = Show help and exit
+autochown [-h] -d <directory> -u <user> 
 ```
 
 ### Exit codes:
