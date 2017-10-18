@@ -30,7 +30,7 @@ root
 # ls -l /sftp/
 total 0
 -rw-r--r--. 1 root root 0 18 okt 20.27 file_before_autochown
-[# ./autochown -d /sftp/ -u sftpuser &
+# ./autochown -d /sftp/ -u sftpuser &
 [1] 3822
 # touch /sftp/file_after_autochown
 # ls -l /sftp/
