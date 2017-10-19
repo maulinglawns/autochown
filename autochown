@@ -71,16 +71,36 @@ done
 
 shift $(($OPTIND-1))
 
-# These arguments are mandatory
-if [[ -z $directory || -z $username ]]; then
-    echo "Either directory or username not specified. Exiting."
-    exit 2
-fi
-
 # You need to run this as root
 if (( $EUID != 0 )); then
     echo "You are not root. Exiting."
     exit 5
+fi
+
+# Check distro
+if cat /etc/debian* &> /dev/null; then
+    os="Debian"
+elif cat /etc/redhat* &> /dev/null; then
+    os="Redhat"
+fi
+
+# We depend on 'inotify-tools' package
+if ! which inotifywait &> /dev/null; then
+    echo "No inotifywait found on system."
+    if [[ $os == "Debian" ]]; then
+        echo "Run 'apt-get install inotify-tools' to install."
+    elif [[ $os == "Redhat" ]]; then
+        echo "Run 'yum install inotify-tools' to install."
+    else
+        echo "Install inotify-tools using your distro's package manager"
+    fi      
+    exit 6  
+fi
+
+# These arguments are mandatory
+if [[ -z $directory || -z $username ]]; then
+    echo "Either directory or username not specified. Exiting."
+    exit 2
 fi
 
 # Check if $directory IS a directory
