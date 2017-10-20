@@ -20,6 +20,7 @@ Exit codes:
 3: Error. The directory specified is not a directory.
 4: Error. The specified user does not exist.
 5: Error. You are not root.
+6: Error. No 'inotify-tools' installed on system.
 ```
 
 ### Example:
